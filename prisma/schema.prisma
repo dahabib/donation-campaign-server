@@ -47,6 +47,7 @@ model Donation {
   description    String
   donationAmount Int          @default(0)
   targetAmount   Int          @default(0)
+  totalCollected Int          @default(0)
   createdBy      String       @map("created_by")
   user           User         @relation(fields: [createdBy], references: [id])
   isActive       Boolean      @default(false) @map("is_active")
