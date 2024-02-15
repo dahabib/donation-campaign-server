@@ -5,18 +5,19 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  password  String
-  role      UserRoles  @default(user)
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  donations Donation[]
-  campaigns Campaign[]
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  password   String
+  role       UserRoles    @default(user)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  donations  Donation[]
+  collection Collection[]
 
   @@map("users")
 }
@@ -33,37 +34,38 @@ model Category {
   bgColor   String     @map("bg_color")
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
-  campaigns Campaign[]
+  donations Donation[]
 
   @@map("categories")
 }
 
-model Campaign {
-  id          String     @id @default(uuid())
-  title       String
-  categoryId  String     @map("category_id")
-  category    Category   @relation(fields: [categoryId], references: [id])
-  description String
-  target      Int        @default(0)
-  createdBy   String     @map("created_by")
-  user        User       @relation(fields: [createdBy], references: [id])
-  isActive    Boolean    @default(false)
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  donations   Donation[]
-
-  @@map("campaigns")
-}
-
 model Donation {
-  id         String   @id @default(uuid())
-  amount     Int
-  campaignId String   @map("campaign_id")
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  donatedBy  String?  @map("donated_by")
-  user       User?    @relation(fields: [donatedBy], references: [id])
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id             String       @id @default(uuid())
+  title          String
+  categoryId     String       @map("category_id")
+  category       Category     @relation(fields: [categoryId], references: [id])
+  description    String
+  donationAmount Int          @default(0)
+  targetAmount   Int          @default(0)
+  createdBy      String       @map("created_by")
+  user           User         @relation(fields: [createdBy], references: [id])
+  isActive       Boolean      @default(false) @map("is_active")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  collections    Collection[]
 
   @@map("donations")
+}
+
+model Collection {
+  id             String   @id @default(uuid())
+  donationAmount Int
+  donationId     String   @map("campaign_id")
+  donation       Donation @relation(fields: [donationId], references: [id])
+  donatedBy      String?  @map("donated_by")
+  user           User?    @relation(fields: [donatedBy], references: [id])
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("collections")
 }
