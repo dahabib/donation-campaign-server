@@ -74,11 +74,9 @@ const getProfile = async (token: string): Promise<IRegisterUserResponse> => {
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist");
   }
 
-  return {
-    name: isUserExist.name,
-    email: isUserExist.email,
-    role: isUserExist.role,
-  };
+  const { password, ...restResponse } = isUserExist;
+
+  return restResponse;
 };
 
 // Get Users
